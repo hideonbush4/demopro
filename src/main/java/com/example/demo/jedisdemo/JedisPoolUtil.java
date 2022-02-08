@@ -30,7 +30,8 @@ public class JedisPoolUtil {
 
 	public static void release(JedisPool jedisPool, Jedis jedis) {
 		if (null != jedis) {
-			jedisPool.returnResource(jedis);
+			// 报错，暂时注释
+//			jedisPool.returnResource(jedis);
 		}
 	}
 
