@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.pojo.Admin;
+import com.example.demo.domain.entity.Admin;
 import com.example.demo.dao.AdminMapper;
 import com.example.demo.dao.UserMapper;
-import com.example.demo.domain.pojo.User;
+import com.example.demo.domain.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
