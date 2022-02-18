@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import com.alibaba.excel.util.DateUtils;
+import com.example.demo.domain.dto.EasyExcelDto;
+import com.example.demo.service.interfaces.EasyExcelService;
 import com.example.demo.utils.ExcelAttribute;
 import com.example.demo.utils.PoiExcelUtils;
 import lombok.AllArgsConstructor;
@@ -7,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +29,21 @@ public class ExcelController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    EasyExcelService easyExcelService;
+
+    @GetMapping("/exportEasyExcel")
+    public void exportEasyExcel(HttpServletResponse response) throws Exception {
+        List<EasyExcelDto> list = new ArrayList<>();
+        EasyExcelDto easyExcelDto = new EasyExcelDto();
+        easyExcelDto.setId(1).setAge(18).setName("张三").setModifiedTime(new Date());
+        EasyExcelDto easyExcelDto1 = new EasyExcelDto();
+        easyExcelDto1.setId(2).setAge(19).setName("李四").setModifiedTime(new Date());
+        list.add(easyExcelDto);
+        list.add(easyExcelDto1);
+        easyExcelService.exportEasyExcel(list, response);
+    }
+
     // 导出
     @GetMapping("/exportExcel")
     public void exportExcel(HttpServletResponse response, HttpServletRequest request) throws Exception {
@@ -41,7 +60,7 @@ public class ExcelController {
 
         // Excel导出到网络 不按模板
         PoiExcelUtils<Student> poiExcelUtils = new PoiExcelUtils<>(Student.class);
-        poiExcelUtils.exportExcel(studentList,"学生信息表-不按模板.xlsx","sheetName",response);
+        poiExcelUtils.exportExcel(studentList, "学生信息表-不按模板.xlsx", "sheetName", response);
 
         logger.info("导出成功！");
     }
