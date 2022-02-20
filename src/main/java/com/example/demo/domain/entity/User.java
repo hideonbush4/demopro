@@ -1,6 +1,8 @@
 package com.example.demo.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,6 +18,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("user1")
 public class User {
+    @TableId()
     private Integer id;
     private String name;
     private Integer age;
