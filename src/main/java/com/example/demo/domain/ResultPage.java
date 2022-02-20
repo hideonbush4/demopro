@@ -23,7 +23,7 @@ public class ResultPage<T> {
         this.currentPage = currentPage;
         this.pageSize = pageSize;
         this.first = (currentPage == 1);
-        this.last = false;
+        this.last = (currentPage == this.totalPages);
         this.empty = content.size() < 1;
         this.content = content;
     }

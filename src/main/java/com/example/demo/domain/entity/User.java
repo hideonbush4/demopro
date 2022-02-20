@@ -18,7 +18,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("user1")
 public class User {
-    @TableId()
+    /**
+     * 默认分配 UUID,主键类型为 String
+     */
+    @TableId(type = IdType.AUTO)
     private Integer id;
     private String name;
     private Integer age;
