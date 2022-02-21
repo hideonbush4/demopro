@@ -1,6 +1,7 @@
 package com.example.demo.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.example.demo.constants.RegularExpressionConstants;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -10,7 +11,10 @@ import javax.validation.constraints.Pattern;
 
 @Data
 @TableName("admin")
-public class Admin {
+public class Admin extends Model<Admin> {
+
+    private static final long serialVersionUID = 1L;
+
 
     private Integer id;
 
