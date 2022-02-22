@@ -1,0 +1,18 @@
+package ${package}.service.impl.${moduleName};
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import ${package}.domain.entity.${moduleName}.${className};
+import ${package}.dao.mysql.${moduleName}.${className}Mapper;
+import ${package}.service.interfaces.${moduleName}.${className}Service;
+import org.springframework.stereotype.Service;
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Service
+public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${className}> implements ${className}Service {
+
+}

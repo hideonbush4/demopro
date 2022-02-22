@@ -1,0 +1,54 @@
+
+package ${package}.domain.entity.${moduleName};
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.EqualsAndHashCode;
+    #if(${hasBigDecimal})
+    import java.math.BigDecimal;
+    #end
+import java.util.Date;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.validation.constraints.NotNull;
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Data
+@ApiModel(value = "${comments}Form")
+public class ${className}Form{
+private static final long serialVersionUID=1L;
+    public interface Update${className}Validate{
+
+    }
+    public interface Add${className}Validate{
+
+    }
+#foreach ($column in $columns)
+
+    #if($column.caseAttrName != "createTime"&&$column.caseAttrName != "createId"&&$column.caseAttrName != "modifiedTime"&&$column.caseAttrName != "updateId")
+
+    /**
+     * $column.comments
+     */
+    #if($column.columnName == $pk.columnName)
+    @JsonSerialize(using = ToStringSerializer.class)
+    @NotNull(groups = Update${className}Validate.class,message="$column.columnName不能为空")
+    #end
+    #if($column.attrType == "Date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    #end
+    @ApiModelProperty(value = "$column.comments"#if($column.hidden), hidden =$column.hidden#end)
+    private $column.attrType $column.caseAttrName;
+    #end
+#end
+}

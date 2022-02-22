@@ -1,6 +1,5 @@
 package com.example.demo.service.interfaces;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.demo.domain.dto.initcomment.GenConfig;
 
 /**
@@ -16,7 +15,7 @@ public interface InitCommentService {
      * @param tableName
      * @return
      */
-    JSONObject queryTableComment(String tableName);
+//    JSONObject queryTableComment(String tableName);
 
     /**
      * 生成代码
@@ -24,7 +23,7 @@ public interface InitCommentService {
      * @param genConfig
      * @return
      */
-    byte[] generalCode(GenConfig genConfig);
+//    byte[] generalCode(GenConfig genConfig);
 
     byte[] generalCodeSelf(GenConfig genConfig);
 

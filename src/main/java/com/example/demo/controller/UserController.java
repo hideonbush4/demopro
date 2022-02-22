@@ -29,23 +29,6 @@ public class UserController {
     AdminMapper adminMapper;
     @Resource
     UserService userService;
-    @RequestMapping("/test1")
-    public String test1(){
-        return "@RestController注解相当于@ResponseBody ＋ @Controller";
-    }
-
-    @RequestMapping("/test2")
-    public User test2(){
-        User user = new User();
-        user.setId(1).setName("张三").setAge(18).setPhone("123456789");
-        return user;
-    }
-
-//    @RequestMapping("/list")
-    public List<User> test3(){
-        List<User> users = userMapper.selectList(null);
-        return users;
-    }
 
     /**
      * 分页查询
@@ -143,6 +126,24 @@ public class UserController {
     @RequestMapping(method = RequestMethod.DELETE)
     public boolean deleteByIds(@RequestBody List<Integer> idList){
         return userService.removeByIds(idList);
+    }
+
+    @RequestMapping("/test1")
+    public String test1(){
+        return "@RestController注解相当于@ResponseBody ＋ @Controller";
+    }
+
+    @RequestMapping("/test2")
+    public User test2(){
+        User user = new User();
+        user.setId(1).setName("张三").setAge(18).setPhone("123456789");
+        return user;
+    }
+
+    //    @RequestMapping("/list")
+    public List<User> test3(){
+        List<User> users = userMapper.selectList(null);
+        return users;
     }
 
     @RequestMapping("/test4")
