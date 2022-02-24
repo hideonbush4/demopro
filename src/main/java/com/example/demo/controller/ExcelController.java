@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.DateUtils;
 import com.example.demo.domain.dto.EasyExcelDto;
 import com.example.demo.service.interfaces.EasyExcelService;
@@ -20,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -30,6 +33,14 @@ public class ExcelController {
 
     @Autowired
     EasyExcelService easyExcelService;
+
+    public void exportEasyExcel2(String ids, HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        String fileName = String.format("导出excel名称.xlsx", DateUtils.format(new Date(), "yyyyMMddHHmmss"));
+        response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        EasyExcel.write(response.getOutputStream(), EasyExcelDto.class).sheet("sheet名称").doWrite(easyExcelService.exportData(ids));
+    }
 
     @PostMapping(value = "/enclosureFile/{uniqueCode}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 //    @PostMapping(value = "/enclosureFile/{uniqueCode}", consumes = {MediaType.APPLICATION_JSON_VALUE})

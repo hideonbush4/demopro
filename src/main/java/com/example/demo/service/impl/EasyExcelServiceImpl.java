@@ -8,6 +8,7 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.demo.domain.dto.EasyExcelDto;
 import com.example.demo.service.interfaces.EasyExcelService;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -69,5 +71,16 @@ public class EasyExcelServiceImpl implements EasyExcelService {
                 excelWriter.finish();
             }
         }
+    }
+
+    @Override
+    public List<EasyExcelDto> exportData(String ids) {
+        String[] split = ids.split(",");
+        List<String> list = Arrays.asList(split);
+        LambdaQueryWrapper<EasyExcelDto> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(EasyExcelDto::getId, list);
+
+
+        return null;
     }
 }

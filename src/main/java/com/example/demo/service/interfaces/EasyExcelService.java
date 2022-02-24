@@ -14,4 +14,6 @@ import java.util.List;
  */
 public interface EasyExcelService {
     void exportEasyExcel(List<EasyExcelDto> list, HttpServletResponse response) throws UnsupportedEncodingException;
+
+    List<EasyExcelDto> exportData(String ids);
 }
