@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.dao.AdminMapper;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,64 @@ public class UserController {
     AdminMapper adminMapper;
     @Resource
     UserService userService;
+
+    public void serviceTest(){
+        User user = new User();
+        // 插入
+        boolean save = userService.save(user);
+
+        // 批量插入
+        List<User> list = new ArrayList<>();
+        boolean b1 = userService.saveBatch(list);
+
+        // 分页条件查询 lamada
+        Page<User> page = new Page<>();
+        page.setCurrent(1);
+        page.setSize(10);
+        Page<User> resultPage = userService.page(page, Wrappers.lambdaQuery(User.class).eq(User::getId, "123"));
+//        Page<User> resultPage1 = userService.page(page, Wrappers.query(user));
+
+        // 通过id查询
+        User userById = userService.getById(1);
+        User user2 = new User();
+        List<User> list1 = userService.list(Wrappers.query(user2));
+
+        // 修改
+        User user1 = userById.setAge(11);
+        boolean b = userService.updateById(userById);
+
+        // 通过id删除
+        boolean b2 = userService.removeById(2);
+
+    }
+
+    public void mapperTest(){
+
+        // 根据条件查询list
+        User user = new User();
+        List<User> list = userMapper.selectList(Wrappers.query(user));
+
+        // 插入
+        int insert = userMapper.insert(user);
+
+        // 删除
+        int i = userMapper.deleteById(1);
+
+        int delete = userMapper.delete(Wrappers.lambdaQuery(User.class).eq(User::getAge, "123"));
+
+        // 修改
+        int i1 = userMapper.updateById(user);
+        int update = userMapper.update(user, Wrappers.query());
+
+        // 查询
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("age", 18);
+        userMapper.selectOne(queryWrapper);
+        Page<User> page = new Page<>();
+        Page<User> userPage = userMapper.selectPage(page, Wrappers.lambdaQuery(User.class).eq(User::getPhone, "123"));
+
+
+    }
 
     /**
      * 分页查询
