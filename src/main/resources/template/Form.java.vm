@@ -1,5 +1,5 @@
 
-package ${package}.domain.entity.${moduleName};
+package ${package}.domain.form.${moduleName};
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

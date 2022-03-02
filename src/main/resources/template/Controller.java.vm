@@ -1,4 +1,4 @@
-package ${package}
+package ${package}.controller.${moduleName};
 
 import java.util.List;
 import org.springframework.beans.BeanUtils;
