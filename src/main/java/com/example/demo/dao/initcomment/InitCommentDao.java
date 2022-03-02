@@ -1,5 +1,6 @@
 package com.example.demo.dao.initcomment;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  * @Version v1.0.0
  */
 @Mapper
-public interface InitCommentDao {
+public interface InitCommentDao extends BaseMapper {
 
     List<Map<String, String>> queryColumns(@Param("tableName") String tableName);
 

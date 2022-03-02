@@ -39,6 +39,8 @@ private static final long serialVersionUID=1L;
      */
     #if($column.columnName == $pk.columnName)
     @TableId
+    #end
+    #if($column.attrType == "Long")
     @JsonSerialize(using = ToStringSerializer.class)
     #end
     #if($column.attrType == "Date")

@@ -1,5 +1,6 @@
-package ${package}import java.util.List;
+package ${package}
 
+import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,10 +36,10 @@ public class ${className}Controller {
      */
     @ApiOperation(value = "分页查询", notes = "分页查询")
     @GetMapping("/page")
-    public Response<Page<${className}>> get${className}Page(Page page, ${className}Form ${classname}Form) {
+    public Page<${className}> get${className}Page(Page page, ${className}Form ${classname}Form) {
         ${className} ${classname} =new ${className}();
         BeanUtils.copyProperties(${classname}Form,${classname});
-        return Response.success(${classname}Service.page(page, Wrappers.query(${classname})));
+        return ${classname}Service.page(page, Wrappers.query(${classname}));
     }
 
     /**
@@ -48,10 +49,10 @@ public class ${className}Controller {
      */
     @ApiOperation(value = "条件查询", notes = "条件查询")
     @GetMapping("/list")
-    public Response<List<${className}>> get${className}List(${className}Form ${classname}Form) {
+    public List<${className}> get${className}List(${className}Form ${classname}Form) {
         ${className} ${classname} =new ${className}();
         BeanUtils.copyProperties(${classname}Form,${classname});
-        return Response.success(${classname}Service.list(Wrappers.query(${classname})));
+        return ${classname}Service.list(Wrappers.query(${classname}));
     }
 
     /**
@@ -61,8 +62,8 @@ public class ${className}Controller {
      */
     @ApiOperation(value = "通过id查询", notes = "通过id查询")
     @GetMapping("/{${pk.lowerAttrName}}")
-    public Response<${className}> getById(@PathVariable("${pk.lowerAttrName}") ${pk.attrType} ${pk.lowerAttrName}) {
-        return Response.success(${classname}Service.getById(${pk.lowerAttrName}));
+    public ${className} getById(@PathVariable("${pk.lowerAttrName}") ${pk.attrType} ${pk.lowerAttrName}) {
+        return ${classname}Service.getById(${pk.lowerAttrName});
     }
 
     /**
@@ -72,11 +73,11 @@ public class ${className}Controller {
      */
     @ApiOperation(value = "新增${comments}", notes = "新增${comments}")
     @PostMapping
-    public Response<${className}> save(@RequestBody ${className}Form ${classname}Form) {
+    public ${className} save(@RequestBody ${className}Form ${classname}Form) {
         ${className} ${classname} =new ${className}();
         BeanUtils.copyProperties(${classname}Form,${classname});
             ${classname}Service.save(${classname});
-        return Response.success(${classname});
+        return ${classname};
     }
 
     /**
@@ -86,10 +87,10 @@ public class ${className}Controller {
      */
     @ApiOperation(value = "修改${comments}", notes = "修改${comments}")
     @PutMapping
-    public Response<Boolean> updateById(@RequestBody @Validated(${className}Form.Update${className}Validate.class) ${className}Form ${classname}Form) {
+    public Boolean updateById(@RequestBody @Validated(${className}Form.Update${className}Validate.class) ${className}Form ${classname}Form) {
         ${className} ${classname} =new ${className}();
         BeanUtils.copyProperties(${classname}Form,${classname});
-        return Response.success(${classname}Service.updateById(${classname}));
+        return ${classname}Service.updateById(${classname});
     }
 
     /**
@@ -99,9 +100,9 @@ public class ${className}Controller {
      */
     @ApiOperation(value = "通过ids删除${comments}", notes = "通过ids删除${comments}")
     @DeleteMapping()
-    public Response<Boolean> removeByIds(@RequestBody List<${pk.attrType}> idList) {
+    public Boolean removeByIds(@RequestBody List<${pk.attrType}> idList) {
 
-        return Response.success(${classname}Service.removeByIds(idList));
+        return ${classname}Service.removeByIds(idList);
     }
 
 }

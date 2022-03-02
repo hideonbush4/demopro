@@ -14,4 +14,5 @@
           and table_schema = (select database())
         order by ordinal_position
     </select>
+
 </mapper>
