@@ -13,8 +13,10 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +104,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = "/pagelist")
-    public Page<User> getUserPage(Page page, UserForm userForm) {
+    public Page<User> getUserPage(Page page,@Validated UserForm userForm) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         return userService.page(page, Wrappers.query(user));
@@ -116,7 +118,9 @@ public class UserController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = "/pagelist2")
-    public Page<User> getUserPage2(Page<User> page, UserForm userForm) {
+    public Page<User> getUserPage2(Page<User> page, UserForm userForm, @RequestParam(defaultValue = "ASC") String sortValue,
+                                   @RequestParam(defaultValue = "1") int currentPage,
+                                   @RequestParam(defaultValue = "10") int pageSize) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
 //        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
@@ -172,7 +176,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public User getUserById(@PathVariable("id") Integer id) {
+    public User getUserById(@PathVariable("id") @NotNull(message = "id不能为空") Integer id) {
         return userService.getById(id);
     }
 

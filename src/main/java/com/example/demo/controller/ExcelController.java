@@ -6,6 +6,8 @@ import com.example.demo.domain.dto.EasyExcelDto;
 import com.example.demo.service.interfaces.EasyExcelService;
 import com.example.demo.utils.ExcelAttribute;
 import com.example.demo.utils.PoiExcelUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -110,6 +110,7 @@ public class ExcelController {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Student {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         @ExcelAttribute(sort = 0, value = "姓名")
         private String name;

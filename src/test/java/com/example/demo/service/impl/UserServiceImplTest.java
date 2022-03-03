@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.BaseTest;
 import com.example.demo.service.interfaces.UserService;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,7 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
     @Test
     public void testUpdate(){
-        userService.testOwnUpdate();
+        try {
+            userService.testOwnUpdate();
+        }catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail("fail");
+            String s = null;
+            Assert.assertNotNull("s为null", s);
+        }
     }
 
 }
