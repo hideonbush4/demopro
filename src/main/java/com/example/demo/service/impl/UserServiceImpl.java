@@ -13,11 +13,15 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Override
-    public void testOwnUpdate() {
+    public boolean testOwnUpdate() {
         LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
         List<String> nameList = Arrays.asList("张三", "李四");
         updateWrapper.in(User::getName, nameList);
         updateWrapper.set(User::getAge, 123);
-        update(updateWrapper);
+//        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+//        List<String> nameList = Arrays.asList("张三", "李四");
+//        updateWrapper.in("name", nameList);
+//        updateWrapper.set("age", 123);
+        return update(updateWrapper);
     }
 }

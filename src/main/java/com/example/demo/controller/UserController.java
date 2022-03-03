@@ -31,6 +31,11 @@ public class UserController {
     @Autowired
     AdminService adminService;
 
+    @RequestMapping(value = "/testupdate", method = RequestMethod.GET)
+    public Object testUpdate(){
+        return userService.testOwnUpdate();
+    }
+
     public void serviceTest() {
         User user = new User();
         // 插入
