@@ -1,16 +1,13 @@
 package com.example.demo.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.demo.dao.AdminMapper;
-import com.example.demo.dao.UserMapper;
 import com.example.demo.domain.ResultPage;
-import com.example.demo.domain.entity.Admin;
 import com.example.demo.domain.entity.User;
 import com.example.demo.domain.form.UserForm;
 import com.example.demo.domain.form.UserFormTest;
+import com.example.demo.service.interfaces.AdminService;
 import com.example.demo.service.interfaces.UserService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.annotations.Param;
@@ -18,22 +15,23 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    // controller册不能注入mapper
+//    @Autowired(required = true)
+//    UserMapper userMapper;
+//    @Autowired
+//    AdminMapper adminMapper;
     @Autowired
-    UserMapper userMapper;
-    @Autowired
-    AdminMapper adminMapper;
-    @Resource
     UserService userService;
+    @Autowired
+    AdminService adminService;
 
-    public void serviceTest(){
+    public void serviceTest() {
         User user = new User();
         // 插入
         boolean save = userService.save(user);
@@ -63,42 +61,43 @@ public class UserController {
 
     }
 
-    public void mapperTest(){
+    public void mapperTest() {
 
         // 根据条件查询list
-        User user = new User();
-        List<User> list = userMapper.selectList(Wrappers.query(user));
-
-        // 插入
-        int insert = userMapper.insert(user);
-
-        // 删除
-        int i = userMapper.deleteById(1);
-
-        int delete = userMapper.delete(Wrappers.lambdaQuery(User.class).eq(User::getAge, "123"));
-
-        // 修改
-        int i1 = userMapper.updateById(user);
-        int update = userMapper.update(user, Wrappers.query());
-
-        // 查询
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("age", 18);
-        userMapper.selectOne(queryWrapper);
-        Page<User> page = new Page<>();
-        Page<User> userPage = userMapper.selectPage(page, Wrappers.lambdaQuery(User.class).eq(User::getPhone, "123"));
+//        User user = new User();
+//        List<User> list = userMapper.selectList(Wrappers.query(user));
+//
+//        // 插入
+//        int insert = userMapper.insert(user);
+//
+//        // 删除
+//        int i = userMapper.deleteById(1);
+//
+//        int delete = userMapper.delete(Wrappers.lambdaQuery(User.class).eq(User::getAge, "123"));
+//
+//        // 修改
+//        int i1 = userMapper.updateById(user);
+//        int update = userMapper.update(user, Wrappers.query());
+//
+//        // 查询
+//        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("age", 18);
+//        userMapper.selectOne(queryWrapper);
+//        Page<User> page = new Page<>();
+//        Page<User> userPage = userMapper.selectPage(page, Wrappers.lambdaQuery(User.class).eq(User::getPhone, "123"));
 
 
     }
 
     /**
      * 分页查询
+     *
      * @param page
      * @param userForm
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET,value = "/pagelist")
-    public Page<User> getUserPage(Page page, UserForm userForm){
+    @RequestMapping(method = RequestMethod.GET, value = "/pagelist")
+    public Page<User> getUserPage(Page page, UserForm userForm) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         return userService.page(page, Wrappers.query(user));
@@ -106,12 +105,13 @@ public class UserController {
 
     /**
      * 分页查询-2
+     *
      * @param page
      * @param userForm
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET,value = "/pagelist2")
-    public Page<User> getUserPage2(Page<User> page, UserForm userForm){
+    @RequestMapping(method = RequestMethod.GET, value = "/pagelist2")
+    public Page<User> getUserPage2(Page<User> page, UserForm userForm) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
 //        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
@@ -128,12 +128,13 @@ public class UserController {
 
     /**
      * 分页查询-使用ResultPage
+     *
      * @param page
      * @param userForm
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET,value = "/ResultPagelist")
-    public ResultPage<User> getUserResultPage(Page<User> page, UserForm userForm){
+    @RequestMapping(method = RequestMethod.GET, value = "/ResultPagelist")
+    public ResultPage<User> getUserResultPage(Page<User> page, UserForm userForm) {
         boolean searchCount = page.isSearchCount();
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
@@ -148,11 +149,12 @@ public class UserController {
 
     /**
      * 条件查询
+     *
      * @param userForm
      * @return
      */
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public List<User> getUserList(@Param("userForm") UserForm userForm, @Param("userFormTest") UserFormTest userFormTest){
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public List<User> getUserList(@Param("userForm") UserForm userForm, @Param("userFormTest") UserFormTest userFormTest) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         return userService.list(Wrappers.query(user));
@@ -160,16 +162,17 @@ public class UserController {
 
     /**
      * 通过id查询
+     *
      * @param id
      * @return
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public User getUserById(@PathVariable("id") Integer id){
+    public User getUserById(@PathVariable("id") Integer id) {
         return userService.getById(id);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public User save(@RequestBody UserForm userForm){
+    public User save(@RequestBody UserForm userForm) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         userService.save(user);
@@ -177,7 +180,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public boolean updateById(@RequestBody UserForm userForm){
+    public boolean updateById(@RequestBody UserForm userForm) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         boolean b = userService.updateById(user);
@@ -185,36 +188,36 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public boolean deleteByIds(@RequestBody List<Integer> idList){
+    public boolean deleteByIds(@RequestBody List<Integer> idList) {
         return userService.removeByIds(idList);
     }
 
     @RequestMapping("/test1")
-    public String test1(){
+    public String test1() {
         return "@RestController注解相当于@ResponseBody ＋ @Controller";
     }
 
     @RequestMapping("/test2")
-    public User test2(){
+    public User test2() {
         User user = new User();
         user.setId(1).setName("张三").setAge(18).setPhone("123456789");
         return user;
     }
 
     //    @RequestMapping("/list")
-    public List<User> test3(){
-        List<User> users = userMapper.selectList(null);
-        return users;
-    }
-
-    @RequestMapping("/test4")
-    public List<Admin> test4(){
-        List<Admin> users = adminMapper.selectList(null);
-        return users;
-    }
-
-    @RequestMapping(value = "/test5", method = RequestMethod.GET)
-    public List<Map<String, Object>> test5(){
-        return adminMapper.selectDiy();
-    }
+//    public List<User> test3(){
+//        List<User> users = userMapper.selectList(null);
+//        return users;
+//    }
+//
+//    @RequestMapping("/test4")
+//    public List<Admin> test4(){
+//        List<Admin> users = adminMapper.selectList(null);
+//        return users;
+//    }
+//
+//    @RequestMapping(value = "/test5", method = RequestMethod.GET)
+//    public List<Map<String, Object>> test5(){
+//        return adminMapper.selectDiy();
+//    }
 }
