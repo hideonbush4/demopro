@@ -68,7 +68,7 @@ public class ExcelController {
     // 导入-easyexcel-带错误信息
     // rollbackType:0单个回滚（错误数据不会导入，正确数据会导入），1整体回滚（只要有错误数据就全部取消导入
     @PostMapping("/importDataError")
-    public Response<ImportResultDto> importDataError(MultipartFile file, byte rollbackType){
+    public Response<ImportResultDto> importDataError(MultipartFile file, @RequestParam("rollbackType") byte rollbackType){
         String fileName = file.getOriginalFilename();
         if (StrUtil.endWithAnyIgnoreCase(fileName, ExcelConstants.EXCEL_SUFFIX)) {
             return Response.success(easyExcelService.importDataError(file, rollbackType));

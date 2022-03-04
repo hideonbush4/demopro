@@ -171,15 +171,18 @@ public class EasyExcelServiceImpl extends ServiceImpl<EasyExcelMapper, EasyExcel
                 sb.append("修改时间不能为空");
             }
             if (StrUtil.isNotEmpty(sb.toString())){
+                // 判空
                 errorList.add(getErrorDto(easyExcelDto, sb.toString()));
+            } else {
+                try {
+                    EasyExcelEntity easyExcelEntity = BeanUtil.copyProperties(easyExcelDto, EasyExcelEntity.class);
+                    save(easyExcelEntity);
+                } catch (Exception exception) {
+                    sb.append(exception.getMessage());
+                    errorList.add(getErrorDto(easyExcelDto, exception.getMessage()));
+                }
             }
 
-            EasyExcelEntity easyExcelEntity = BeanUtil.copyProperties(easyExcelDto, EasyExcelEntity.class);
-            try {
-                save(easyExcelEntity);
-            } catch (Exception exception) {
-                errorList.add(getErrorDto(easyExcelDto, exception.getMessage()));
-            }
         }
         String errorFilePath = saveErrorInfo2TempFile(errorList);
 

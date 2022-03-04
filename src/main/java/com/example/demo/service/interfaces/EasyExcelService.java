@@ -33,6 +33,12 @@ public interface EasyExcelService extends IService<EasyExcelEntity> {
 
     ImportResultDto importData(MultipartFile file);
 
+    /**
+     * rollbackType默认为0，单个回滚
+     * @param file
+     * @param rollbackType
+     * @return
+     */
     ImportResultDto importDataError(MultipartFile file, Byte rollbackType);
 
 }
