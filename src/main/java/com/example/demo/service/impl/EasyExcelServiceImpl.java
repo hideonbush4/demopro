@@ -9,15 +9,22 @@ import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.demo.dao.EasyExcelMapper;
 import com.example.demo.domain.dto.EasyExcelDto;
+import com.example.demo.domain.entity.EasyExcelEntity;
 import com.example.demo.service.interfaces.EasyExcelService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +35,8 @@ import java.util.List;
  * @Version v1.0.0
  */
 @Service
-public class EasyExcelServiceImpl implements EasyExcelService {
+@Slf4j
+public class EasyExcelServiceImpl extends ServiceImpl<EasyExcelMapper, EasyExcelEntity> implements EasyExcelService {
     @Override
     public void exportEasyExcel(List<EasyExcelDto> list, HttpServletResponse response) throws UnsupportedEncodingException {
 
@@ -75,12 +83,26 @@ public class EasyExcelServiceImpl implements EasyExcelService {
 
     @Override
     public List<EasyExcelDto> exportData(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            // ids为空，下载模板
+            EasyExcelDto easyExcelDto = new EasyExcelDto();
+            easyExcelDto.setName("示例名称").setAge(18).setModifiedTime(new Date());
+            List<EasyExcelDto> list = Arrays.asList(easyExcelDto);
+            return list;
+        }
+
         String[] split = ids.split(",");
         List<String> list = Arrays.asList(split);
-        LambdaQueryWrapper<EasyExcelDto> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.in(EasyExcelDto::getId, list);
+        LambdaQueryWrapper<EasyExcelEntity> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(EasyExcelEntity::getId, list);
+        List<EasyExcelEntity> list1 = this.list(lambdaQueryWrapper);
+        List<EasyExcelDto> listDto = new ArrayList<>();
+        list1.forEach(easyExcelEntity -> {
+            EasyExcelDto easyExcelDto = new EasyExcelDto();
+            BeanUtils.copyProperties(easyExcelEntity, easyExcelDto);
+            listDto.add(easyExcelDto);
+        });
 
-
-        return null;
+        return listDto;
     }
 }

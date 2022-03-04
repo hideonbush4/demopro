@@ -34,6 +34,8 @@ public class ExcelController {
     @Autowired
     EasyExcelService easyExcelService;
 
+    // 导出-easyexcel
+    @GetMapping("/exportOrTemplate")
     public void exportEasyExcel2(String ids, HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
@@ -42,12 +44,7 @@ public class ExcelController {
         EasyExcel.write(response.getOutputStream(), EasyExcelDto.class).sheet("sheet名称").doWrite(easyExcelService.exportData(ids));
     }
 
-    @PostMapping(value = "/enclosureFile/{uniqueCode}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-//    @PostMapping(value = "/enclosureFile/{uniqueCode}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public void importTest(@RequestParam("multipartFiles") MultipartFile[] multipartFiles, @PathVariable String uniqueCode){
-
-    }
-
+    // 导出-easyexcel
     @GetMapping("/exportEasyExcel")
     public void exportEasyExcel(HttpServletResponse response) throws Exception {
         List<EasyExcelDto> list = new ArrayList<>();
@@ -60,7 +57,13 @@ public class ExcelController {
         easyExcelService.exportEasyExcel(list, response);
     }
 
-    // 导出
+    @PostMapping(value = "/enclosureFile/{uniqueCode}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @PostMapping(value = "/enclosureFile/{uniqueCode}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public void importTest(@RequestParam("multipartFiles") MultipartFile[] multipartFiles, @PathVariable String uniqueCode){
+
+    }
+
+    // 导出-poi
     @GetMapping("/exportExcel")
     public void exportExcel(HttpServletResponse response, HttpServletRequest request) throws Exception {
         // 模拟从数据库查询数据
@@ -81,7 +84,7 @@ public class ExcelController {
         logger.info("导出成功！");
     }
 
-    // 导入
+    // 导入-poi
     @PostMapping("/importExcel")
     public Map<String, Object> importExcel(MultipartFile file) throws Exception {
         PoiExcelUtils<Student> poiExcelUtils = new PoiExcelUtils<>(Student.class);

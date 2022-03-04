@@ -1,7 +1,7 @@
 package com.example.demo.dao;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.demo.domain.entity.EasyExcel;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.demo.domain.entity.EasyExcelEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,6 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @Version v1.0.0
  */
 @Mapper
-public interface EasyExcelMapper extends IService<EasyExcel> {
+public interface EasyExcelMapper extends BaseMapper<EasyExcelEntity> {
 
 }

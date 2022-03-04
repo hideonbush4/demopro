@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -19,7 +20,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @TableName("easyexcel")
-public class EasyExcel {
+public class EasyExcelEntity {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -28,6 +29,7 @@ public class EasyExcel {
 
     private Integer age;
 
+    @TableField("modifiedTime")
     private Date modifiedTime;
 
 }
