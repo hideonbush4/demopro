@@ -1,8 +1,15 @@
 package com.example.demo.controller;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.DateUtils;
-import com.example.demo.domain.dto.EasyExcelDto;
+import com.example.demo.constants.ExcelConstants;
+import com.example.demo.domain.Response;
+import com.example.demo.domain.dto.easyexcel.EasyExcelDto;
+import com.example.demo.domain.dto.easyexcel.ImportResultDto;
 import com.example.demo.service.interfaces.EasyExcelService;
 import com.example.demo.utils.ExcelAttribute;
 import com.example.demo.utils.PoiExcelUtils;
@@ -11,6 +18,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.omg.CORBA.portable.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +26,15 @@ import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.security.action.GetPropertyAction;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.security.AccessController;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -34,9 +46,44 @@ public class ExcelController {
     @Autowired
     EasyExcelService easyExcelService;
 
-    // 导入-easyexcel
-    public void importData(){
+    @GetMapping("/errorFileDownload")
+    public void downloadErrorExcel(String errorFilePath, HttpServletResponse response) throws IOException {
+        if (StrUtil.isEmpty(errorFilePath)) {
+            throw new RuntimeException("找不到要下载的错误信息文件");
+        }
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        String fileName = String.format("批量导入错误信息文件_%s.xlsx", DateUtil.format(new Date(), "yyyyMMddHHmmss"));
+        response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
 
+        // 获取临时文件目录
+        String tempDir = AccessController.doPrivileged(new GetPropertyAction("java.io.tmpdir"));
+        String fileFullPath = String.format("%s%s%s", tempDir, File.separator, errorFilePath);
+        byte[] bytes = FileUtil.readBytes(fileFullPath);
+        ServletOutputStream outputStream = response.getOutputStream();
+        outputStream.write(bytes);
+        IoUtil.close(outputStream);
+    }
+
+    // 导入-easyexcel-带错误信息
+    // rollbackType:0单个回滚（错误数据不会导入，正确数据会导入），1整体回滚（只要有错误数据就全部取消导入
+    @PostMapping("/importDataError")
+    public Response<ImportResultDto> importDataError(MultipartFile file, byte rollbackType){
+        String fileName = file.getOriginalFilename();
+        if (StrUtil.endWithAnyIgnoreCase(fileName, ExcelConstants.EXCEL_SUFFIX)) {
+            return Response.success(easyExcelService.importDataError(file, rollbackType));
+        }
+        return Response.fail("上传excel文件");
+    }
+
+    // 导入-easyexcel
+    @PostMapping("/importData")
+    public Response<ImportResultDto> importData(MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        if (StrUtil.endWithAnyIgnoreCase(fileName, ExcelConstants.EXCEL_SUFFIX)) {
+            return Response.success(easyExcelService.importData(file));
+        }
+        return Response.fail("上传excel文件");
     }
 
     // 导出-easyexcel
@@ -54,9 +101,13 @@ public class ExcelController {
     public void exportEasyExcel(HttpServletResponse response) throws Exception {
         List<EasyExcelDto> list = new ArrayList<>();
         EasyExcelDto easyExcelDto = new EasyExcelDto();
-        easyExcelDto.setId(1).setAge(18).setName("张三").setModifiedTime(new Date());
+        easyExcelDto.setAge(18);
+        easyExcelDto.setName("张三");
+        easyExcelDto.setModifiedTime(new Date());
         EasyExcelDto easyExcelDto1 = new EasyExcelDto();
-        easyExcelDto1.setId(2).setAge(19).setName("李四").setModifiedTime(new Date());
+        easyExcelDto1.setAge(19);
+        easyExcelDto.setName("李四");
+        easyExcelDto.setModifiedTime(new Date());
         list.add(easyExcelDto);
         list.add(easyExcelDto1);
         easyExcelService.exportEasyExcel(list, response);

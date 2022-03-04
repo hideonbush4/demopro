@@ -1,11 +1,9 @@
-package com.example.demo.domain.dto;
+package com.example.demo.domain.dto.easyexcel;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
-import com.alibaba.excel.annotation.write.style.ColumnWidth;
-import com.alibaba.excel.annotation.write.style.ContentStyle;
-import com.alibaba.excel.annotation.write.style.HeadStyle;
+import com.alibaba.excel.annotation.write.style.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -33,20 +31,21 @@ import java.util.Date;
  */
 
 @Data
-@Accessors(chain = true)
+// easyexcel的相关实体不能使用@Accessors
+//@Accessors(chain = true)
 // 标题样式
 @HeadStyle(horizontalAlignment = HorizontalAlignment.CENTER)
 // @ContentStyle 文本样式
 @ContentStyle(horizontalAlignment = HorizontalAlignment.CENTER)
+@ContentRowHeight(20)
+@HeadRowHeight(25)
 public class EasyExcelDto {
-    @ExcelIgnore
-    private Integer id;
 
     @ColumnWidth(20)
     @ExcelProperty(value = "姓名", index = 0)
     private String name;
 
-    @ColumnWidth(5)
+    @ColumnWidth(10)
     @ExcelProperty(value = "年龄", index = 1)
     private Integer age;
 

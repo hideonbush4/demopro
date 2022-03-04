@@ -1,8 +1,10 @@
 package com.example.demo.service.interfaces;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.demo.domain.dto.EasyExcelDto;
-import com.example.demo.domain.entity.EasyExcelEntity;
+import com.example.demo.domain.dto.easyexcel.EasyExcelDto;
+import com.example.demo.domain.dto.easyexcel.ImportResultDto;
+import com.example.demo.domain.entity.easyexcel.EasyExcelEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
@@ -28,4 +30,9 @@ public interface EasyExcelService extends IService<EasyExcelEntity> {
      * @return
      */
     List<EasyExcelDto> exportData(String ids);
+
+    ImportResultDto importData(MultipartFile file);
+
+    ImportResultDto importDataError(MultipartFile file, Byte rollbackType);
+
 }
