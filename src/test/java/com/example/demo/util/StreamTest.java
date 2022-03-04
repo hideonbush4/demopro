@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,6 +21,28 @@ class StreamTest extends BaseTest {
 
     @Autowired
     UserService userService;
+
+    @Test
+    public void test2(){
+        List<User> list = userService.list();
+
+        // 从小到大排序
+        list.sort((o1, o2) -> o1.getAge().compareTo(o2.getAge()));
+
+        // 同上
+        list.sort(Comparator.comparingInt(user -> user.getAge()));
+        list.sort(Comparator.comparingInt(User::getAge));
+
+        // 进行相反的排序
+        list.sort(Comparator.comparingInt(User::getAge).reversed());
+
+        // 从大到小排序
+        list.sort(Comparator.comparing(
+                User::getAge, (s1, s2) -> {
+                    return s2.compareTo(s1);
+                }
+        ));
+    }
 
     @Test
     public void test1(){

@@ -34,6 +34,11 @@ public class ExcelController {
     @Autowired
     EasyExcelService easyExcelService;
 
+    // 导入-easyexcel
+    public void importData(){
+
+    }
+
     // 导出-easyexcel
     @GetMapping("/exportOrTemplate")
     public void exportEasyExcel2(String ids, HttpServletResponse response) throws IOException {
