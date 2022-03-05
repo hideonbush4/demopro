@@ -18,9 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 // 而回滚则由@Rollback来指定,对于想要落库的数据,则添加@Commit注解就可以
 //@Rollback(value = false)
 //@Transactional
+// 测试类不能加public
  class UserServiceImplTest extends BaseTest {
     @Autowired
     UserService userService;
+
+    @Test
+    public void testList(){
+        userService.list().forEach(System.out::println);
+    }
 
     @Test
     public void testUpdate(){
