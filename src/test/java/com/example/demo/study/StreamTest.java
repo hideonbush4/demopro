@@ -20,6 +20,56 @@ class StreamTest extends BaseTest {
     UserService userService;
 
     @Test
+    public void test10(){
+    }
+
+    @Test
+    public void test9(){
+        // 值传递和应用传递
+        Map<User, String> map = new HashMap<>();
+        User user = new User().setName("11");
+        map.put(user, "1");
+        user.setName("22");
+        System.out.println(map.get(user));
+        int a = 1;
+        System.out.println(tt(a));
+        System.out.println(a);
+        System.out.println("----------");
+        String s = "123";
+        System.out.println(ss(s));
+        System.out.println(s);
+        System.out.println("----------");
+        Integer i = 1;
+        System.out.println(tt2(i));
+        System.out.println(i);
+        System.out.println("-----------");
+        StringBuffer sb = new StringBuffer("sb");
+        System.out.println(ss2(sb));
+        System.out.println(sb);
+    }
+
+    public int tt(int s){
+        s = 2;
+        return s + 1;
+    }
+
+    public String ss(String s){
+        s = "abc";
+        return s;
+    }
+
+    public Integer tt2(Integer i){
+//        i = 3;
+        i = new Integer(3);
+        return i;
+    }
+
+    public StringBuffer ss2(StringBuffer stringBuffer){
+        stringBuffer.append("abb");
+        return stringBuffer;
+    }
+
+    @Test
     public void test8(){
         Integer[] array = {1, 5, 2, 4, 7, 3, 6};
         // 该list本质上还是一个数组
