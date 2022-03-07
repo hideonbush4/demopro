@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
     }
 
     @Test
+    // 抑制所有类型的警告
+    @SuppressWarnings("all")
     public void testUpdate(){
         try {
             userService.testOwnUpdate();
