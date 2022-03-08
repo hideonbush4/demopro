@@ -1,5 +1,6 @@
 package com.example.demo.domain.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -33,6 +34,9 @@ public class BaseEntity implements Serializable {
     private Date createTime;
 
     @TableField(value = "modifiedTime", fill = FieldFill.INSERT_UPDATE)
+    // @JSONField是fastjson的注解，JSON.toJSONString方法获取的属性格式
+    // @JsonFormat是jackson的注解，数据库的返回数据使用改格式
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date modifiedTime;
 

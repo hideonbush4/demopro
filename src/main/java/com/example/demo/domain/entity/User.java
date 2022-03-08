@@ -29,8 +29,10 @@ public class User extends Model<User> {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String name;
-    // 忽略某些字段的序列化，controller层返回对象时不返回该字段
+    // 忽略某些字段的序列化，controller层返回对象时不返回该字段 使用Jackson是使用
     @JsonIgnore
+    // 使用fastJson时使用
+    @JSONField(serialize = false)
     private Integer age;
     @TableField(exist = false)
     private String phone;
