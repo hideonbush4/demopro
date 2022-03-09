@@ -8,17 +8,30 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Data
 public class UserForm {
+
+    public interface insert{
+
+    }
+
+    public interface update{
+
+    }
+    // @Validated分组校验
+    @NotNull(message = "修改时id不允许为空", groups = UserForm.update.class)
     private Integer id;
+    @NotBlank(message = "新增时name不允许为空", groups = UserForm.insert.class)
     private String name;
     private Integer age;
     /**
      * 全宗号;唯一值
      */
+    // 未指定校验分组，为默认分组
     @NotBlank(message = "全宗号不允许为空")
     @ApiModelProperty(value = "全宗号;唯一值")
     @TableField("sect_code")

@@ -14,14 +14,18 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@Validated
 public class UserController {
     // controller册不能注入mapper
 //    @Autowired(required = true)
@@ -104,6 +108,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = "/pagelist")
+    // @Validated未指定group，不会校验update和insert组
     public Page<User> getUserPage(Page page,@Validated UserForm userForm) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
@@ -181,7 +186,8 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public User save(@RequestBody UserForm userForm) {
+    // 指定校验组为insert组合默认组
+    public User save(@RequestBody @Validated(value = {UserForm.insert.class, Default.class}) UserForm userForm) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         userService.save(user);
@@ -189,7 +195,8 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public boolean updateById(@RequestBody UserForm userForm) {
+    // 指定校验组为update组合默认组
+    public boolean updateById(@RequestBody @Validated(value = {UserForm.update.class, Default.class}) UserForm userForm) {
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         boolean b = userService.updateById(user);
