@@ -208,12 +208,12 @@ public class UserController {
         return userService.removeByIds(idList);
     }
 
-    @RequestMapping("/test1")
+    @RequestMapping(value = "/test1", method = RequestMethod.GET)
     public String test1() {
         return "@RestController注解相当于@ResponseBody ＋ @Controller";
     }
 
-    @RequestMapping("/test2")
+    @RequestMapping(value = "/test2", method = RequestMethod.GET)
     public User test2() {
         User user = new User();
         user.setId(1).setName("张三").setAge(18).setPhone("123456789");
