@@ -1,28 +1,89 @@
 package com.example.demo.study;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author dengzhewen
  * @create 2022-03-07 10:03
  * @Version v1.0.0
  */
-public class OtherTest {
+public class Main {
 
-    public static void main(String[] args) {
+
+
+    // https://www.nowcoder.com/practice/dbace3a5b3c4480e86ee3277f3fe1e85
+    public static void test8(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int i = sc.nextInt();
+        int first = i * (i - 1) + 1;
+        StringBuffer sb = new StringBuffer();
+        for (int j = 0; j < i; j++) {
+            sb.append("+" + first);
+            first = first + 2;
+        }
+        System.out.println(sb.substring(1));
+    }
+
+    // https://www.nowcoder.com/practice/769d45d455fe40b385ba32f97e7bcded
+    public static void test7(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int year = sc.nextInt();
+        int month = sc.nextInt();
+        int day = sc.nextInt();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, day);
+        System.out.println(calendar.get(Calendar.DAY_OF_YEAR));
+    }
+
+    // https://www.nowcoder.com/practice/1b46eb4cf3fa49b9965ac3c2c1caf5ad
+    public static void test6(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNextInt()) {
+            Integer n = sc.nextInt();
+            String s = Integer.toBinaryString(n);
+            String s1 = s.replaceAll("0", "");
+            System.out.println(s1.length());
+        }
+    }
+
+    public static void test5(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        int y= 1;
-        for (int i = 1; i <= n; i++) {
-            int x = y;
-            int countJ = i+1;
-            for (int j = 1; j <= n-i+1; j++) {
-                System.out.print(x+" ");
-                x += countJ++;
-
+        int count = 0;
+        if (n < 6) {
+            System.out.println(0);
+            return;
+        }
+        for (int i = 6; i < n; i++) {
+            int sum = 0;
+            for (int j = 1; j <= i/2; j++) {
+                if (i % j == 0) {
+                    sum += j;
+                }
             }
+            if (sum == i) {
+                count++;
+            }
+        }
+        System.out.println(count);
+    }
+
+    public static void test4(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNextInt()) {
+            int n = sc.nextInt();
+            int one = 1;
+            int two = 0;
+            int three = 0;
+            int attr = 0;
+            for (int i = 2; i <= n; i++) {
+                three += two;
+                two = one;
+                one = attr;
+                attr = three + two;
+            }
+            System.out.println(one + two + three);
         }
     }
 

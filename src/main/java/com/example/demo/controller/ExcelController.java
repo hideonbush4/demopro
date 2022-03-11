@@ -46,6 +46,7 @@ public class ExcelController {
     @Autowired
     EasyExcelService easyExcelService;
 
+    // 下载导入失败的错误信息
     @GetMapping("/errorFileDownload")
     public void downloadErrorExcel(String errorFilePath, HttpServletResponse response) throws IOException {
         if (StrUtil.isEmpty(errorFilePath)) {
@@ -86,7 +87,7 @@ public class ExcelController {
         return Response.fail("上传excel文件");
     }
 
-    // 导出-easyexcel
+    // 导出模板-easyexcel
     @GetMapping("/exportOrTemplate")
     public void exportEasyExcel2(String ids, HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.ms-excel");
