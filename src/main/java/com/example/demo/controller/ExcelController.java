@@ -15,6 +15,8 @@ import com.example.demo.utils.ExcelAttribute;
 import com.example.demo.utils.PoiExcelUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sun.security.action.GetPropertyAction;
@@ -39,6 +42,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
+@Api(tags = "excel导入导出")
+@RequestMapping(value = "/excel")
+@Validated
 public class ExcelController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -48,6 +54,7 @@ public class ExcelController {
 
     // 下载导入失败的错误信息
     @GetMapping("/errorFileDownload")
+    @ApiOperation(value = "下载导入失败的错误信息", notes = "下载导入失败的错误信息")
     public void downloadErrorExcel(String errorFilePath, HttpServletResponse response) throws IOException {
         if (StrUtil.isEmpty(errorFilePath)) {
             throw new RuntimeException("找不到要下载的错误信息文件");
@@ -69,6 +76,7 @@ public class ExcelController {
     // 导入-easyexcel-带错误信息
     // rollbackType:0单个回滚（错误数据不会导入，正确数据会导入），1整体回滚（只要有错误数据就全部取消导入
     @PostMapping("/importDataError")
+    @ApiOperation(value = "导入-easyexcel-带错误信息", notes = "导入-easyexcel-带错误信息")
     public Response<ImportResultDto> importDataError(MultipartFile file, @RequestParam("rollbackType") byte rollbackType){
         String fileName = file.getOriginalFilename();
         if (StrUtil.endWithAnyIgnoreCase(fileName, ExcelConstants.EXCEL_SUFFIX)) {
@@ -79,6 +87,7 @@ public class ExcelController {
 
     // 导入-easyexcel
     @PostMapping("/importData")
+    @ApiOperation(value = "导入-easyexcel", notes = "导入-easyexcel")
     public Response<ImportResultDto> importData(MultipartFile file){
         String fileName = file.getOriginalFilename();
         if (StrUtil.endWithAnyIgnoreCase(fileName, ExcelConstants.EXCEL_SUFFIX)) {
@@ -89,6 +98,7 @@ public class ExcelController {
 
     // 导出模板-easyexcel
     @GetMapping("/exportOrTemplate")
+    @ApiOperation(value = "导出模板-easyexcel", notes = "导出模板-easyexcel")
     public void exportEasyExcel2(String ids, HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
@@ -99,6 +109,7 @@ public class ExcelController {
 
     // 导出-easyexcel
     @GetMapping("/exportEasyExcel")
+    @ApiOperation(value = "导出示例数据-easyexcel", notes = "导出示例数据-easyexcel")
     public void exportEasyExcel(HttpServletResponse response) throws Exception {
         List<EasyExcelDto> list = new ArrayList<>();
         EasyExcelDto easyExcelDto = new EasyExcelDto();
@@ -122,6 +133,7 @@ public class ExcelController {
 
     // 导出-poi
     @GetMapping("/exportExcel")
+    @ApiOperation(value = "导出示例数据-poi", notes = "导出示例数据-poi")
     public void exportExcel(HttpServletResponse response, HttpServletRequest request) throws Exception {
         // 模拟从数据库查询数据
         List<Student> studentList = new ArrayList<>();
@@ -143,6 +155,7 @@ public class ExcelController {
 
     // 导入-poi
     @PostMapping("/importExcel")
+    @ApiOperation(value = "导入-poi", notes = "导入-poi")
     public Map<String, Object> importExcel(MultipartFile file) throws Exception {
         PoiExcelUtils<Student> poiExcelUtils = new PoiExcelUtils<>(Student.class);
         List<Student> studentList = poiExcelUtils.importExcel(file.getInputStream(), 2, 0);
