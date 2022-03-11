@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -105,10 +106,14 @@ public class PoiExcelUtils<T> {
         XSSFWorkbook workbook = mapData2Excel(dataList, sheetName);
 
         //===============response响应导出Excel=================
-        String fileName = new String(excelName.getBytes("UTF-8"), "ISO-8859-1");
+//        String fileName = new String(excelName.getBytes("UTF-8"), "ISO-8859-1");
+//        response.setContentType("application/octet-stream");
+//        response.setHeader("content-disposition", "attachment;filename=" + fileName);
+//        response.setHeader("filename", fileName);
+        String fileName = URLEncoder.encode(excelName, "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xls");
         response.setContentType("application/octet-stream");
-        response.setHeader("content-disposition", "attachment;filename=" + fileName);
-        response.setHeader("filename", fileName);
+        response.setCharacterEncoding("utf-8");
         workbook.write(response.getOutputStream());
         workbook.close();
     }

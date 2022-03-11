@@ -118,8 +118,8 @@ public class ExcelController {
         easyExcelDto.setModifiedTime(new Date());
         EasyExcelDto easyExcelDto1 = new EasyExcelDto();
         easyExcelDto1.setAge(19);
-        easyExcelDto.setName("李四");
-        easyExcelDto.setModifiedTime(new Date());
+        easyExcelDto1.setName("李四");
+        easyExcelDto1.setModifiedTime(new Date());
         list.add(easyExcelDto);
         list.add(easyExcelDto1);
         easyExcelService.exportEasyExcel(list, response);
