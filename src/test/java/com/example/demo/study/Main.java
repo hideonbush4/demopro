@@ -1,5 +1,6 @@
 package com.example.demo.study;
 
+import javax.script.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,8 +11,317 @@ import java.util.stream.Collectors;
  */
 public class Main {
 
-    // https://www.nowcoder.com/practice/22948c2cad484e0291350abad86136c3
     public static void main(String[] args) {
+
+    }
+
+    // 动态规划
+    public static void test27() {
+        // N表示物体的个数，V表示背包的载重
+        int N=4,V=10;
+        //用于存储每个物体的重量，下标从1开始
+        int[] weight = new int[N];
+        //存储每个物体的收益，下标从1开始
+         int[] value = new int[N];
+        //二维数组，用来保存每种状态下的最大收益
+         int[][] F = new int[N][V];
+        //注意边界问题，i是从1开始的，j是从0开始的
+        //因为F[i - 1][j]中i要减1
+        for (int i = 1; i <= N; i++) {
+            for (int j = 0; j <= V; j++) {
+                //如果容量为j的背包放得下第i个物体
+                if (j >= weight[i]) {
+                    F[i][j] = Math.max(F[i - 1][j - weight[i]] + value[i], F[i - 1][j]);
+                } else {
+                    //放不下，只能选择不放第i个物体
+                    F[i][j] = F[i - 1][j];
+                }
+            }
+        }
+    }
+
+    // https://www.nowcoder.com/practice/98dc82c094e043ccb7e0570e5342dd1b
+    public static void test26(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s1 = sc.next();
+        String s2 = sc.next();
+        String shortstr = s1.length() < s2.length() ? s1 : s2;
+        String longstr = s2.length() > s1.length() ? s2 : s1;
+        int n = 0;
+        for (int i = 0; i < shortstr.length(); i++) {
+            for (int j = shortstr.length(); j > i ; j--) {
+                if (longstr.contains(shortstr.substring(i, j))) {
+                    n = Math.max(n, j - i);
+                    continue;
+                }
+            }
+        }
+        System.out.println(n);
+        sc.close();
+    }
+
+    // https://www.nowcoder.com/practice/2c81f88ecd5a4cc395b5308a99afbbec
+    public static void test25(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNextLine()) {
+            String next = sc.nextLine();
+            char[] chars = next.toCharArray();
+            StringBuffer sb = new StringBuffer();
+            int max = 0;
+            for (int i = 0; i < chars.length; i++) {
+                if (!Character.isDigit(chars[i])) {
+                    continue;
+                }
+                int maxcount = 0;
+                String str = "";
+                for (int j = i + 1; j < chars.length; j++) {
+                    if (Character.isDigit(chars[j])) {
+                        maxcount++;
+                        str = next.substring(i, j + 1);
+                    } else {
+                        break;
+                    }
+                }
+                if (maxcount > max) {
+                    max = maxcount;
+                    sb = new StringBuffer(str);
+                } else if (maxcount == max) {
+                    sb.append(str);
+                    max = maxcount;
+                }
+            }
+            System.out.println(sb + "," + (max+1));
+        }
+        sc.close();
+    }
+
+    // https://www.nowcoder.com/practice/9999764a61484d819056f807d2a91f1e
+    public static void test24(String[] args) throws Exception{
+        Scanner sc = new Scanner(System.in);
+        String str = sc.next();
+        str = str.replace("[", "(");
+        str = str.replace("]", ")");
+        str = str.replace("{", "(");
+        str = str.replace("}", ")");
+        ScriptEngine se = new ScriptEngineManager().getEngineByName("JavaScript");
+        System.out.println(se.eval(str));
+        sc.close();
+    }
+
+    public static void test23(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNext()) {
+            int n = sc.nextInt();
+            List<String> list = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                list.add(sc.next());
+            }
+            for (String s : list) {
+                char[] chars = s.toCharArray();
+                TreeMap<Character, Integer> map = new TreeMap<>();
+                for (char aChar : chars) {
+                    map.put(aChar, map.getOrDefault(aChar, 0) + 1);
+                }
+                int sum = 0;
+                List<Integer> collect = map.entrySet().stream().sorted(new Comparator<Map.Entry<Character, Integer>>() {
+                    @Override
+                    public int compare(Map.Entry<Character, Integer> o1, Map.Entry<Character, Integer> o2) {
+                        return o2.getValue() - o1.getValue();
+                    }
+                }).map(e -> e.getValue()).collect(Collectors.toList());
+                int count = 26;
+                for (Integer integer : collect) {
+                    sum += integer * count;
+                    count--;
+                }
+                System.out.println(sum);
+            }
+        }
+        sc.close();
+    }
+
+    // https://www.nowcoder.com/practice/cf24906056f4488c9ddb132f317e03bc
+    public static void test22(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNextInt()) {
+            int m = sc.nextInt();
+            int n = sc.nextInt();
+            int[][] arr = new int[m][n];
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    arr[i][j] = sc.nextInt();
+                }
+            }
+            List<Point> list = new ArrayList<>();
+            bfs(arr, 0, 0, list);
+            list.forEach(e -> {
+                System.out.println("(" + e.x + "," + e.y + ")");
+            });
+        }
+        sc.close();
+    }
+
+    public static boolean bfs(int[][] arr, int x, int y, List<Point> list) {
+        list.add(new Point(x, y));
+        arr[x][y] = 1;
+        if (x == arr.length - 1 && y == arr[0].length - 1) {
+            return true;
+        }
+        if (x + 1 < arr.length && arr[x + 1][y] == 0) {
+            if (bfs(arr, x + 1, y, list)) {
+                return true;
+            }
+        }
+        if (y + 1 < arr[0].length && arr[x][y + 1] == 0) {
+            if (bfs(arr, x, y + 1, list)) {
+                return true;
+            }
+        }
+        if (x - 1 >= 0 && arr[x - 1][y] == 0) {
+            if (bfs(arr, x - 1, y, list)) {
+                return true;
+            }
+        }
+        if (y - 1 >= 0 && arr[x][y - 1] == 0) {
+            if (bfs(arr, x, y - 1, list)) {
+                return true;
+            }
+        }
+        // 回溯
+        list.remove(list.size() - 1);
+        arr[x][y] = 0;
+        return false;
+    }
+
+    public static class Point{
+        private int x;
+        private int y;
+
+        Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    // https://www.nowcoder.com/practice/f9a4c19050fc477e9e27eb75f3bfd49c
+    public static void test21(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNextInt()) {
+            int n = sc.nextInt();
+            int[] w = new int[n];
+            int[] num = new int[n];
+            for (int i = 0; i < n; i++) {
+                w[i] = sc.nextInt();
+            }
+            for (int i = 0; i < n; i++) {
+                num[i] = sc.nextInt();
+            }
+            Set<Integer> set = new HashSet<>();
+            set.add(0);
+            for (int i = 0; i < n; i++) {
+                ArrayList<Integer> list = new ArrayList<>(set);
+                for (int j = 1; j <= num[i]; j++) {
+                    for(int k=0;k<list.size();k++){
+                        set.add(list.get(k) + w[i] * j);
+                    }
+                }
+            }
+            System.out.println(set.size());
+        }
+        sc.close();
+    }
+
+    // https://www.nowcoder.com/practice/2f6f9339d151410583459847ecc98446
+    public static void test20(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNextInt()) {
+            int h = sc.nextInt();
+            double len = (double) h;
+            double temp = (double) h/2;
+            for (int i = 1; i < 5; i++) {
+                len += temp * 2;
+                temp = temp/2;
+            }
+            System.out.println(len);
+            System.out.println(temp);
+        }
+        sc.close();
+    }
+
+    // https://www.nowcoder.com/practice/6d9d69e3898f45169a441632b325c7b4
+    public static void test19(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        while (sc.hasNextInt()) {
+            int n = sc.nextInt();
+            int[] arr = new int[n];
+            int[] arrl = new int[n];
+            int[] arrr = new int[n];
+            for (int i = 0; i < n; i++) {
+                arr[i] = sc.nextInt();
+            }
+
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (arr[j] < arr[i]) {
+                        arrl[i] = Math.max(arrl[i], arrl[j] + 1);
+                    }
+                }
+            }
+
+            for (int i = n - 1; i >= 0 ; i--) {
+                for (int j = n - 1; j >= i ; j--) {
+                    if (arr[j] < arr[i]) {
+                        arrr[i] = Math.max(arrr[i], arrr[j] + 1);
+                    }
+                }
+            }
+            int max = 0;
+            for (int i = 0; i < n; i++) {
+                max = Math.max(max, arrl[i] + arrr[i] + 1);
+            }
+            System.out.println(n - max);
+
+        }
+
+        sc.close();
+    }
+
+    // https://www.nowcoder.com/practice/6d9d69e3898f45169a441632b325c7b4
+    public static void test18(String[] args) {
+        int i = 0;
+        for (; i < 10; ++i) {
+            System.out.println(i);
+        }
+        System.out.println("---");
+        System.out.println(i);
+    }
+
+    // https://www.nowcoder.com/practice/119bcca3befb405fbe58abe9c532eb29
+    public static void test17(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String next = sc.next();
+        String[] split = next.split(";");
+        int i = 0, j = 0;
+        for (String s : split) {
+            if (s.matches("[WASD][0-9]{1,2}")) {
+                if (s.charAt(0) == 'A' || s.charAt(0) == 'a') {
+                    i = i - Integer.valueOf(s.substring(1));
+                } else if (s.charAt(0) == 'D' || s.charAt(0) == 'd') {
+                    i = i + Integer.valueOf(s.substring(1));
+                } else if (s.charAt(0) == 'W' || s.charAt(0) == 'w') {
+                    j = j + Integer.valueOf(s.substring(1));
+                } else if (s.charAt(0) == 'S' || s.charAt(0) == 's') {
+                    j = j - Integer.valueOf(s.substring(1));
+                }
+            }
+        }
+        System.out.println(i + "," + j);
+        sc.close();
+    }
+
+    // https://www.nowcoder.com/practice/22948c2cad484e0291350abad86136c3
+    public static void test16(String[] args) {
         Scanner sc = new Scanner(System.in);
 
         int n1 = sc.nextInt();
