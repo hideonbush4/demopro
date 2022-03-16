@@ -1,6 +1,7 @@
 package com.example.demo.study;
 
-import javax.script.*;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,209 @@ public class Main {
 
     public static void main(String[] args) {
 
+    }
+
+    public static void jikao(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine();
+        String[] split = s.split(",");
+        int[][] x = new int[2][10000];
+        for (int i = 0; i < split.length; i++) {
+            x[0][i] = Integer.valueOf(split[i]);
+        }
+
+        int count = 0;
+        for (int i = 0; i < split.length; i++) {
+            if (isBigest(x[0][i], Arrays.asList(x[0][i]))) {
+                x[1][i] = x[1][i] + count;
+                count++;
+            } else {
+                jiaohuan(i, x);
+            }
+        }
+
+
+
+        sc.close();
+    }
+
+    public static void jiaohuan(int index, int[][] arr) {
+        int temp1 = arr[0][index];
+        int temp2 = arr[1][index];
+        for (int i = index; i < arr[0].length-1; i++) {
+            arr[0][i] = arr[0][i + 1];
+        }
+        arr[0][arr.length-1] = temp1;
+        arr[1][arr.length-1] =temp2;
+    }
+
+    public static void jikao3(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine();
+        String[] split = s.split(",");
+        LinkedList<Integer> list = new LinkedList<>();
+        for (int i = 0; i < split.length; i++) {
+            list.add(Integer.valueOf(split[i]));
+        }
+
+        LinkedList<Integer> temp = new LinkedList<>();
+        temp.addAll(list);
+
+        int x = 0;
+        HashMap<String, Integer> map = new HashMap<>();
+        int len = list.size();
+        for (int i = 0; i < len; i++) {
+            if(list.size() > 0){
+                Integer tt = list.get(i);
+                if (isBigest(tt, list)) {
+                    list.remove(tt);
+                    i--;
+                    map.put(tt+"", x);
+                    x++;
+                } else {
+                    list.remove(tt);
+                    list.add(tt);
+                    i--;
+                }
+            }
+        }
+
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < temp.size(); i++) {
+            String key = temp.get(i)+"";
+            sb.append("," + map.get(key));
+        }
+        System.out.println(sb.substring(1));
+
+        sc.close();
+    }
+
+    public static boolean isBigest(Integer i, List<Integer> list) {
+        LinkedList<Integer> temp = new LinkedList<>();
+        temp.addAll(list);
+        temp.sort(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2 - o1;
+            }
+        });
+        return i == temp.get(0);
+    }
+
+    public static void jikao2(String[] args) {
+
+        double[][] xishu = new double[300][500];
+        int[] x = new int[500];
+        double[] b = new double[300];
+        String[] dayu = new String[300];
+
+        Scanner sc = new Scanner(System.in);
+        String line = sc.nextLine();
+        String[] split = line.split(";");
+        String[] first = split[0].split(",");
+        int lie = first.length;
+        int hang = line.substring(line.lastIndexOf(";"), line.length()).split(",").length;
+        int i = 0, j = 0;
+        for (; i < hang; i++) {
+            String[] split1 = split[i].split(",");
+            for (; j < lie; j++) {
+                xishu[i][j] = Double.parseDouble(split1[j]);
+            }
+        }
+        String[] xzu = split[j].split(",");
+        j++;
+        for (int k = 0; k < lie; k++) {
+            x[k] = Integer.valueOf(xzu[k]);
+        }
+        String[] bzu = split[j].split(",");
+        j++;
+        for (int k = 0; k < hang; k++) {
+            b[k] = Double.parseDouble(bzu[k]);
+        }
+        String[] dayuzu = split[j].split(",");
+        for (int k = 0; k < hang; k++) {
+            dayu[k] = dayuzu[k];
+        }
+
+        boolean b1 = true;
+        double max = -100000;
+        for (int k = 0; k < xishu.length; k++) {
+            int sum = 0;
+            for (int l = 0; l < xishu[0].length; l++) {
+                sum += xishu[k][l];
+            }
+            if (!jisuan(sum, b[k], dayu[k])) {
+                b1 = false;
+                break;
+            }
+            max = Math.max(max, sum - b[k]);
+        }
+        System.out.println(b1 + " " + max);
+
+
+        sc.close();
+    }
+
+    public static boolean jisuan(double a, double b, String fuhao){
+        if ("=".equals(fuhao)) {
+            return a == b;
+        } else if ("<".equals(fuhao)) {
+            return a < b;
+        } else if (">".equals(fuhao)) {
+            return a > b;
+        } else if ("<=".equals(fuhao)) {
+            return a <= b;
+        } else if (">=".equals(fuhao)) {
+            return a >= b;
+        }
+        return false;
+    }
+
+    public static void bishi1(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        String next = scanner.nextLine();
+        String[] s = next.split(" ");
+        for (String char1 : s) {
+            list.add(Integer.valueOf(char1));
+        }
+        StringBuffer sb = new StringBuffer();
+        String temp = "";
+        boolean b = false;
+
+        for (int i = 0; i < list.size(); i++) {
+            Integer x = list.get(i);
+            if (x == 1 && i == 0) {
+                sb.append("a");
+                b = false;
+            } else if (x == 1 && i > 0) {
+                if (b) {
+                    sb = new StringBuffer("a");
+                } else {
+                    sb.append("a");
+                }
+                b = false;
+            } else if (x == 2 && i > 0 && b) {
+                temp = sb.toString();
+            } else if (x == 3 && i > 0 && b) {
+                temp = sb.toString();
+                sb = new StringBuffer();
+                b = false;
+            } else if (x == 4) {
+                if (b) {
+                    sb = new StringBuffer(temp);
+                } else {
+                    sb.append(temp);
+                }
+                b = false;
+            } else if (x == 5) {
+                b = true;
+            }
+
+
+        }
+        System.out.println(sb.length());
+        scanner.close();
     }
 
     // 动态规划
