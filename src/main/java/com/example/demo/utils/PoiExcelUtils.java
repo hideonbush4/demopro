@@ -2,6 +2,7 @@ package com.example.demo.utils;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -19,6 +20,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PoiExcelUtils<T> {
+
+    // 设置单元格日期格式
+    public static final String DATEFORMAT = "yyyy-dd-MM";
+
+    // 日期格式单元格长度
+    public static final int DATEWIDTH = 10 * 512;
     /**
      * 与本次导出相关的POJO类型
      */
@@ -189,15 +196,31 @@ public class PoiExcelUtils<T> {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet(sheetName);
 
+        // 设置特殊格式列的长度
+        for (Integer integer : fieldMap.keySet()) {
+            if ("date".equals(fieldMap.get(integer).getAnnotation(ExcelAttribute.class).format())) {
+                sheet.setColumnWidth(integer, DATEWIDTH);
+            }
+        }
+
+        // 日期格式
+        CellStyle cellStyle = workbook.createCellStyle();
+        CreationHelper creationHelper = workbook.getCreationHelper();
+        short format = creationHelper.createDataFormat().getFormat(DATEFORMAT);
+        cellStyle.setDataFormat(format);
+
         //=============创建表头===============
         // Student类的id字段没有加上ExcelAttribute注解，不会走到if语句，所以表头第一列不会创建，为空
         XSSFRow row = sheet.createRow(0);
-        Field[] fields = clazz.getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
-            if (field.isAnnotationPresent(ExcelAttribute.class)) {
-                row.createCell(i).setCellValue(field.getAnnotation(ExcelAttribute.class).value());
-            }
+//        Field[] fields = clazz.getDeclaredFields();
+//        for (int i = 0; i < fields.length; i++) {
+//            Field field = fields[i];
+//            if (field.isAnnotationPresent(ExcelAttribute.class)) {
+//                row.createCell(i).setCellValue(field.getAnnotation(ExcelAttribute.class).value());
+//            }
+//        }
+        for (Integer integer : fieldMap.keySet()) {
+            row.createCell(integer).setCellValue(fieldMap.get(integer).getAnnotation(ExcelAttribute.class).value());
         }
 
         //=========创建单元格，并设置数据（跳过表头）=======
@@ -209,7 +232,7 @@ public class PoiExcelUtils<T> {
                 XSSFCell cell = row.createCell(k);
                 Field field = fieldMap.get(k);
                 field.setAccessible(true);
-                mappingValue(field, cell, pojo);
+                mappingValue(field, cell, pojo, cellStyle);
             }
         }
         return workbook;
@@ -230,6 +253,11 @@ public class PoiExcelUtils<T> {
         //================得到模板=================
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         XSSFSheet sheet = workbook.getSheetAt(0);
+        // 日期格式
+        CellStyle cellStyle = workbook.createCellStyle();
+        CreationHelper creationHelper = workbook.getCreationHelper();
+        short format = creationHelper.createDataFormat().getFormat(DATEFORMAT);
+        cellStyle.setDataFormat(format);
 
         //=============从模板抽取样式===============
         // 抽取第一行数据的样式
@@ -249,7 +277,7 @@ public class PoiExcelUtils<T> {
                 Field field = fieldMap.get(k - cellIndex);
                 // 把罗密欧给朱丽叶（把字段的数据赋值给单元格）
                 field.setAccessible(true);
-                mappingValue(field, cell, pojo);
+                mappingValue(field, cell, pojo, cellStyle);
             }
         }
         return workbook;
@@ -266,10 +294,11 @@ public class PoiExcelUtils<T> {
      * @param pojo
      * @throws IllegalAccessException
      */
-    private void mappingValue(Field field, Cell cell, Object pojo) throws IllegalAccessException {
+    private void mappingValue(Field field, Cell cell, Object pojo, CellStyle cellStyle) throws IllegalAccessException {
         Class<?> fieldType = field.getType();
         if (Date.class.isAssignableFrom(fieldType)) {
             cell.setCellValue((Date) field.get(pojo));
+            cell.setCellStyle(cellStyle);
         } else if (int.class.isAssignableFrom(fieldType) || Integer.class.isAssignableFrom(fieldType)) {
             cell.setCellValue((Integer) field.get(pojo));
         } else if (double.class.isAssignableFrom(fieldType) || Double.class.isAssignableFrom(fieldType)) {
@@ -278,6 +307,8 @@ public class PoiExcelUtils<T> {
             cell.setCellValue((Boolean) field.get(pojo));
         } else if (BigDecimal.class.isAssignableFrom(fieldType)) {
             cell.setCellValue(((BigDecimal) field.get(pojo)).doubleValue());
+        } else if (long.class.isAssignableFrom(fieldType) || Long.class.isAssignableFrom(fieldType)) {
+            cell.setCellValue((Long) field.get(pojo));
         } else {
             cell.setCellValue((String) field.get(pojo));
         }

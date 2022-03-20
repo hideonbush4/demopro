@@ -6,7 +6,36 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class ThreadTest {
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+
+    public static final int COUNT = 10000;
+    private static int value = 0;
+
+    public static void main(String[] args) throws Exception{
+        ThreadTest threadTest1 = new ThreadTest();
+        ThreadTest threadTest2 = new ThreadTest();
+        Thread thread1 = new Thread(() -> {
+            synchronized (threadTest1) {
+                for (int i = 0; i < COUNT; i++) {
+                    value++;
+                }
+            }
+            System.out.println("线程1完成！");
+        });
+        Thread thread2 = new Thread(() -> {
+            synchronized (threadTest1) {
+                for (int i = 0; i < COUNT; i++) {
+                    value++;
+                }
+            }
+            System.out.println("线程2完成！");
+        });
+        thread1.start();
+        thread2.start();
+        Thread.sleep(1000);
+        System.out.println(value);
+    }
+
+    public static void main1(String[] args) throws ExecutionException, InterruptedException {
         // 方式1：重写Thread#run()
         Thread thread = new Thread() {
             @Override

@@ -20,7 +20,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.omg.CORBA.portable.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,6 +183,7 @@ public class ExcelController {
     @AllArgsConstructor
     public static class Student {
         @JsonSerialize(using = ToStringSerializer.class)
+//        @ExcelAttribute(sort = 6, value = "id")
         private Long id;
         @ExcelAttribute(sort = 0, value = "姓名")
         private String name;
@@ -191,7 +191,7 @@ public class ExcelController {
         private Integer age;
         @ExcelAttribute(sort = 2, value = "住址")
         private String address;
-        @ExcelAttribute(sort = 3, value = "生日")
+        @ExcelAttribute(sort = 3, value = "生日", format = "date")
         private Date birthday;
         @ExcelAttribute(sort = 4, value = "身高")
         private Double height;
