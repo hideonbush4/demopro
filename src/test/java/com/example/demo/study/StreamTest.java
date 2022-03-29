@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +22,33 @@ class StreamTest extends BaseTest {
 
     @Test
     public void test10(){
+        List<User> userList = new ArrayList<>();
+        userList.add(new User(1L, "aaa"));
+        userList.add(new User(2L, "bbb"));
+        userList.add(new User(3L, "ccc"));
+        userList.add(new User(2L, "ddd"));
+        userList.add(new User(3L, "eee"));
+
+        // 报错因为user的id重复
+//        Map<Integer, String> map = userList.stream().collect(Collectors.toMap(User::getId, User::getName));
+
+        // 解决方法1：取前面value的值，或者取后面放入的value值，则覆盖先前的value值
+        Map<Integer, String> map2 = userList.stream().collect(Collectors.toMap(User::getId, User::getName, (v1, v2) -> v1)); // 保留第一个
+        Map<Integer, String> map3 = userList.stream().collect(Collectors.toMap(User::getId, User::getName, (v1, v2) -> v2)); // 后面覆盖前面
+        for (Integer integer : map2.keySet()) {
+            System.out.println(integer + "===" + map2.get(integer));
+        }
+        for (Integer integer : map3.keySet()) {
+            System.out.println(integer + "===" + map3.get(integer));
+        }
+
+        // 方法2：使用Function.identity()
+        Map<Integer, User> map4 = userList.stream().collect(Collectors.toMap(User::getId, Function.identity(), ((user, user2) -> user2)));
+        for (Integer integer : map4.keySet()) {
+            System.out.println(integer + "===" + map4.get(integer));
+        }
     }
+
 
     @Test
     public void test9(){

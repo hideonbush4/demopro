@@ -7,8 +7,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -22,6 +24,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("user1")
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class User extends Model<User> {
     /**
      * 默认分配 UUID,主键类型为 String
@@ -36,4 +40,9 @@ public class User extends Model<User> {
     private Integer age;
     @TableField(exist = false)
     private String phone;
+
+    public User(Long id, String name) {
+        this.id = Math.toIntExact(id);
+        this.name = name;
+    }
 }
