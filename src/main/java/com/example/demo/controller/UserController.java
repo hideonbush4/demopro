@@ -105,6 +105,8 @@ public class UserController {
      * @param userForm
      * @return
      */
+    // 解决跨域问题方法1：在目标方法加@CrossOrigin注解
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, value = "/pagelist")
     // @Validated未指定group，不会校验update和insert组
     public Page<User> getUserPage(Page page,@Validated UserForm userForm) {
