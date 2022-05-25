@@ -21,6 +21,20 @@ class StreamTest extends BaseTest {
     UserService userService;
 
     @Test
+    public void test11() {
+        List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c", "d"));
+
+        List<String> limit3 = list.stream().limit(3).collect(Collectors.toList());
+        // 超出实际长度也不会报错
+        List<String> limit5 = list.stream().limit(5).collect(Collectors.toList());
+        List<String> range3_4 = list.stream().skip(2).limit(2).collect(Collectors.toList());
+        // 超出实际长度也不会报错
+        List<String> range3_5 = list.stream().skip(2).limit(3).collect(Collectors.toList());
+
+        System.out.println(limit3 + " " + limit5 + " " + range3_4 + " " + range3_5);
+    }
+
+    @Test
     public void test10(){
         List<User> userList = new ArrayList<>();
         userList.add(new User(1L, "aaa"));
