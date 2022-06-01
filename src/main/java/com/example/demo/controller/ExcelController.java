@@ -157,9 +157,32 @@ public class ExcelController {
     @ApiOperation(value = "导入-poi", notes = "导入-poi")
     public Map<String, Object> importExcel(MultipartFile file) throws Exception {
         PoiExcelUtils<Student> poiExcelUtils = new PoiExcelUtils<>(Student.class);
-        List<Student> studentList = poiExcelUtils.importExcel(file.getInputStream(), 2, 0);
+        // 兼容xls
+        String[] split = Objects.requireNonNull(file.getOriginalFilename()).split("\\.");
+        List<Student> studentList = poiExcelUtils.importExcel(split[split.length - 1], file.getInputStream(), 1, 0);
+//        List<Student> studentList = poiExcelUtils.importExcel(file.getInputStream(), 1, 0);
 
         saveToDB(studentList);
+        logger.info("导入{}成功！", file.getOriginalFilename());
+
+        // 这里用Map偷懒了，实际项目中可以封装Result实体类返回
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 200);
+        result.put("data", studentList);
+        result.put("msg", "success");
+        return result;
+    }
+
+    // 导入-poi-map
+    @PostMapping("/importExcelForMap")
+    public Map<String, Object> importExcelForMap(MultipartFile file) throws Exception {
+        PoiExcelUtils poiExcelUtils = new PoiExcelUtils<>();
+        String[] split = Objects.requireNonNull(file.getOriginalFilename()).split("\\.");
+        // 兼容xls
+        List<Map<Integer, String>> studentList = poiExcelUtils.importExcelForMap(split[split.length - 1], file.getInputStream(), 0, 0);
+//        List<Student> studentList = poiExcelUtils.importExcel(file.getInputStream(), 1, 0);
+
+//        saveToDB(studentList);
         logger.info("导入{}成功！", file.getOriginalFilename());
 
         // 这里用Map偷懒了，实际项目中可以封装Result实体类返回

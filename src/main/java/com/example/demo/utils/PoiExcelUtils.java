@@ -22,10 +22,15 @@ import java.util.*;
 public class PoiExcelUtils<T> {
 
     // 设置单元格日期格式
-    public static final String DATEFORMAT = "yyyy-dd-MM";
+    public static final String DATEFORMAT = "yyyy-MM-dd";
 
     // 日期格式单元格长度
     public static final int DATEWIDTH = 10 * 512;
+
+    // excel后缀
+    public static final String XLS = "xls";
+    public static final String XLSX = "xlsx";
+
     /**
      * 与本次导出相关的POJO类型
      */
@@ -50,6 +55,10 @@ public class PoiExcelUtils<T> {
                 fieldMap.put(field.getAnnotation(ExcelAttribute.class).sort(), field);
             }
         }
+    }
+
+    public PoiExcelUtils() {
+
     }
 
     /**
@@ -118,7 +127,7 @@ public class PoiExcelUtils<T> {
 //        response.setHeader("content-disposition", "attachment;filename=" + fileName);
 //        response.setHeader("filename", fileName);
         String fileName = URLEncoder.encode(excelName, "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xls");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         workbook.write(response.getOutputStream());
@@ -168,7 +177,7 @@ public class PoiExcelUtils<T> {
                 // 获取单元格的值
                 XSSFCell cell = row.getCell(j);
                 // 当前是朱丽叶，已经就位了，罗密欧在哪？
-                Object value = getValue(cell);
+//                Object value = getValue(cell);
                 // 根据索引快速从老公组找出罗密欧
                 Field field = fieldMap.get(j - cellIndex);
                 // 把朱丽叶配给罗密欧（把单元格数据赋值给字段）
@@ -180,6 +189,81 @@ public class PoiExcelUtils<T> {
         }
 
         return dataList;
+    }
+
+    /**
+     * Excel导入 - 兼容xls
+     *
+     * @param inputStream 要导入的Excel表
+     * @param rowIndex    从哪一行开始读取
+     * @param cellIndex   从哪一列开始读取
+     * @return
+     * @throws Exception
+     */
+    public List<T> importExcel(String suffix, InputStream inputStream, Integer rowIndex, Integer cellIndex) throws Exception {
+        //================准备要导入的Excel=================
+        Workbook workbook;
+        if (XLSX.equals(suffix)) {
+            workbook = new XSSFWorkbook(inputStream);
+        } else if (XLS.equals(suffix)) {
+            workbook = new HSSFWorkbook(inputStream);
+        } else {
+            throw new IllegalArgumentException("file suffix error");
+        }
+        // 默认只解析第一个sheet
+        Sheet sheet = workbook.getSheetAt(0);
+
+        List<T> dataList = new ArrayList<>();
+
+        //================从Excel读取数据，并设置给pojoList================
+        for (int i = rowIndex; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            // 遍历单元格（老婆组）
+            T pojo = (T) clazz.newInstance();
+            for (int j = cellIndex; j < row.getLastCellNum(); j++) {
+                // 获取单元格的值
+                Cell cell = row.getCell(j);
+                // 当前是朱丽叶，已经就位了，罗密欧在哪？
+//                Object value = getValue(cell);
+                // 根据索引快速从老公组找出罗密欧
+                Field field = fieldMap.get(j - cellIndex);
+                // 把朱丽叶配给罗密欧（把单元格数据赋值给字段）
+                field.setAccessible(true);
+                field.set(pojo, convertAttrType(field, cell));
+            }
+
+            dataList.add(pojo);
+        }
+
+        return dataList;
+    }
+
+    public List<Map<Integer, String>> importExcelForMap(String suffix, InputStream inputStream, Integer rowIndex, Integer cellIndex) throws Exception {
+        //================准备要导入的Excel=================
+        Workbook workbook;
+        if (XLSX.equals(suffix)) {
+            workbook = new XSSFWorkbook(inputStream);
+        } else if (XLS.equals(suffix)) {
+            workbook = new HSSFWorkbook(inputStream);
+        } else {
+            throw new IllegalArgumentException("file suffix error");
+        }
+        // 默认只解析第一个sheet
+        Sheet sheet = workbook.getSheetAt(0);
+
+        List<Map<Integer, String>> list = new ArrayList<>();
+        // rownum是最后一个元素的index
+        for (int i = rowIndex; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            Map<Integer, String> map = new LinkedHashMap<>();
+            // cellnum是最后一个元素index+1
+            for (int j = cellIndex; j < row.getLastCellNum(); j++) {
+                map.put(j, getValue(row.getCell(j)));
+            }
+            list.add(map);
+        }
+
+        return list;
     }
 
 
@@ -195,6 +279,8 @@ public class PoiExcelUtils<T> {
     private XSSFWorkbook mapData2Excel(List<T> dataList, String sheetName) throws IllegalAccessException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet(sheetName);
+        // 列宽自适应，对中文支持不好，数据太多请勿使用
+//        sheet.autoSizeColumn(1, true);
 
         // 设置特殊格式列的长度
         for (Integer integer : fieldMap.keySet()) {
@@ -202,12 +288,6 @@ public class PoiExcelUtils<T> {
                 sheet.setColumnWidth(integer, DATEWIDTH);
             }
         }
-
-        // 日期格式
-        CellStyle cellStyle = workbook.createCellStyle();
-        CreationHelper creationHelper = workbook.getCreationHelper();
-        short format = creationHelper.createDataFormat().getFormat(DATEFORMAT);
-        cellStyle.setDataFormat(format);
 
         //=============创建表头===============
         // Student类的id字段没有加上ExcelAttribute注解，不会走到if语句，所以表头第一列不会创建，为空
@@ -232,7 +312,7 @@ public class PoiExcelUtils<T> {
                 XSSFCell cell = row.createCell(k);
                 Field field = fieldMap.get(k);
                 field.setAccessible(true);
-                mappingValue(field, cell, pojo, cellStyle);
+                mappingValue(field, cell, pojo, workbook);
             }
         }
         return workbook;
@@ -254,10 +334,10 @@ public class PoiExcelUtils<T> {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         XSSFSheet sheet = workbook.getSheetAt(0);
         // 日期格式
-        CellStyle cellStyle = workbook.createCellStyle();
-        CreationHelper creationHelper = workbook.getCreationHelper();
-        short format = creationHelper.createDataFormat().getFormat(DATEFORMAT);
-        cellStyle.setDataFormat(format);
+//        CellStyle cellStyle = workbook.createCellStyle();
+//        CreationHelper creationHelper = workbook.getCreationHelper();
+//        short format = creationHelper.createDataFormat().getFormat(DATEFORMAT);
+//        cellStyle.setDataFormat(format);
 
         //=============从模板抽取样式===============
         // 抽取第一行数据的样式
@@ -277,7 +357,7 @@ public class PoiExcelUtils<T> {
                 Field field = fieldMap.get(k - cellIndex);
                 // 把罗密欧给朱丽叶（把字段的数据赋值给单元格）
                 field.setAccessible(true);
-                mappingValue(field, cell, pojo, cellStyle);
+                mappingValue(field, cell, pojo, workbook);
             }
         }
         return workbook;
@@ -294,11 +374,15 @@ public class PoiExcelUtils<T> {
      * @param pojo
      * @throws IllegalAccessException
      */
-    private void mappingValue(Field field, Cell cell, Object pojo, CellStyle cellStyle) throws IllegalAccessException {
+    private void mappingValue(Field field, Cell cell, Object pojo, XSSFWorkbook workbook) throws IllegalAccessException {
+        CellStyle cellStyle = workbook.createCellStyle();
         Class<?> fieldType = field.getType();
         if (Date.class.isAssignableFrom(fieldType)) {
             cell.setCellValue((Date) field.get(pojo));
-            cell.setCellStyle(cellStyle);
+
+            // 日期格式
+            XSSFCreationHelper creationHelper = workbook.getCreationHelper();
+            cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat(DATEFORMAT));
         } else if (int.class.isAssignableFrom(fieldType) || Integer.class.isAssignableFrom(fieldType)) {
             cell.setCellValue((Integer) field.get(pojo));
         } else if (double.class.isAssignableFrom(fieldType) || Double.class.isAssignableFrom(fieldType)) {
@@ -312,6 +396,11 @@ public class PoiExcelUtils<T> {
         } else {
             cell.setCellValue((String) field.get(pojo));
         }
+
+        // 单元格居中
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cell.setCellStyle(cellStyle);
     }
 
 
