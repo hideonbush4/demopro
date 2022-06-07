@@ -83,9 +83,9 @@ import java.util.Optional;
 //     }
 
      @Test
-     public void test2(){
+     public void test2(String str){
          // 支持过滤操作和映射操作
-         String str = "A";
+//         String str = "A";
          Optional<String> optional = Optional.ofNullable(str);   //转换为Optional（可空）
          System.out.println(optional.filter(s -> s.equals("B")).get());   //被过滤了，此时元素为null，获取时报错
      }
