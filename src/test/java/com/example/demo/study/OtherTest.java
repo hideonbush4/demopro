@@ -5,8 +5,30 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class OtherTest {
+
+    @Test
+    public void test3() {
+//        BlockingQueue<String> abq = new ArrayBlockingQueue<>(3);
+//        abq.add("a");
+//        abq.remove();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(5); // 固定线程
+//        ExecutorService executorService = Executors.newSingleThreadExecutor(); // 单个线程
+//        ExecutorService executorService = Executors.newCachedThreadPool(); // 伸缩线程
+        try {
+            for (int i = 0; i < 100; i++) {
+                executorService.execute(() -> {
+                    System.out.println(Thread.currentThread().getName() + " ---> ");
+                });
+            }
+        } finally {
+            executorService.shutdown();
+        }
+    }
 
     private byte[] bytes = new byte[64 * 1024];
 
